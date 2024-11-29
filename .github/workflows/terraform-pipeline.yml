@@ -45,14 +45,14 @@ jobs:
       - name: Terraform Plan
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-        run: terraform plan -var-file="environments/dev.tfvars"
+        run: terraform plan
 
       # Terraform Apply
       - name: Terraform Apply
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-        run: terraform apply -var-file="environments/dev.tfvars" -auto-approve
+        run: terraform apply
 
       # Run Schema Initialization
       - name: Initialize Schema
