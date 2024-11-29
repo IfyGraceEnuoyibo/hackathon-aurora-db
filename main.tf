@@ -1,12 +1,5 @@
 terraform {
   required_version = ">= 1.5.0"
-  backend "s3" {
-    bucket         = "terraform-state-bucket"
-    key            = "aurora-database/root-state"
-    region         = "us-east-1"
-    encrypt        = true
-    dynamodb_table = "terraform-state-lock"
-  }
 }
 
 module "network" {
@@ -32,10 +25,10 @@ module "aurora" {
   environment            = var.environment
 }
 
-output "aurora_endpoint" {
-  value = module.aurora.aurora_endpoint
-}
+# output "aurora_endpoint" {
+#   value = module.aurora.aurora_endpoint
+# }
 
-output "aurora_security_group_id" {
-  value = module.network.aurora_security_group_id
-}
+# output "aurora_security_group_id" {
+#   value = module.network.aurora_security_group_id
+# }
