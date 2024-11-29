@@ -7,6 +7,7 @@ resource "aws_rds_cluster" "aurora" {
   backup_retention_period = var.backup_retention_days
   vpc_security_group_ids  = [aws_security_group.aurora_sg.id]
   db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
+  performance_insights_kms_key_id = var.performance_insights_kms_key_id
   # enable_performance_insights = var.enable_performance_insights
   tags = {
     Environment = var.environment
@@ -19,7 +20,6 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   cluster_identifier = aws_rds_cluster.aurora.id
   instance_class     = var.instance_class
   engine             = "aurora-postgresql"
-  enable_performance_insights = var.enable_performance_insights
 
   tags = {
     Name = "${var.cluster_identifier}-instance-${count.index + 1}"

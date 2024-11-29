@@ -51,3 +51,9 @@ variable "allowed_cidr_blocks" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "performance_insights_kms_key_id" {
+  description = "The KMS key ID used to encrypt Performance Insights data"
+  type        = string
+  default     = null  # Use null if not explicitly providing a KMS key
+}
