@@ -19,6 +19,7 @@ module "aurora" {
   instance_class         = "db.r6g.large"
   vpc_id                 = module.network.vpc_id
   subnet_ids             = module.network.private_subnet_ids
+  allowed_cidr_blocks    = ["0.0.0.0/0"]
   secret_name            = var.secret_name
   backup_retention_days  = 7
   enable_performance_insights = true

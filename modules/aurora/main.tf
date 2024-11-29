@@ -20,3 +20,38 @@ resource "aws_rds_cluster_instance" "aurora_instance" {
   instance_class     = var.instance_class
   engine             = "aurora-postgresql"
 }
+
+# Security Group for Aurora
+resource "aws_security_group" "aurora_sg" {
+  name        = "${var.cluster_identifier}-sg"
+  description = "Security group for Aurora cluster"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = var.allowed_cidr_blocks
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.cluster_identifier}-sg"
+  }
+}
+
+# Subnet Group for Aurora
+resource "aws_db_subnet_group" "aurora_subnets" {
+  name       = "${var.cluster_identifier}-subnet-group"
+  subnet_ids = var.subnet_ids
+
+  tags = {
+    Name = "${var.cluster_identifier}-subnet-group"
+  }
+}

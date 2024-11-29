@@ -24,10 +24,12 @@ variable "backup_retention_days" {
 
 variable "vpc_id" {
   description = "VPC ID for the Aurora cluster"
+  type = string
 }
 
 variable "subnet_ids" {
   description = "List of subnet IDs for the Aurora cluster"
+  type = list(string)
 }
 
 variable "secret_name" {
@@ -40,4 +42,10 @@ variable "enable_performance_insights" {
 
 variable "environment" {
   description = "Deployment environment (dev or prod)"
+}
+
+variable "allowed_cidr_blocks" {
+  description = "CIDR blocks allowed to access the Aurora cluster"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }
