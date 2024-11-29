@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy (dev or prod)"
+        required: true
+        default: "dev"   
 
 jobs:
   terraform:
@@ -33,12 +39,16 @@ jobs:
 
       # Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -var-file="environments/${{ secrets.ENVIRONMENT }}.tfvars"
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: terraform plan -var-file="environments/${{ github.event.inputs.environment }}.tfvars"
 
       # Terraform Apply
       - name: Terraform Apply
-        if: github.event_name == 'push'
-        run: terraform apply -var-file="environments/${{ secrets.ENVIRONMENT }}.tfvars" -auto-approve
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: terraform apply -var-file="environments/${{ github.event.inputs.environment }}.tfvars" -auto-approve
 
       # Run Schema Initialization
       - name: Initialize Schema
