@@ -52,7 +52,7 @@ jobs:
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-        run: terraform apply
+        run: terraform apply -auto-approve
 
       # Run Schema Initialization
       - name: Initialize Schema
