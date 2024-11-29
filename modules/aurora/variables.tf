@@ -38,6 +38,8 @@ variable "secret_name" {
 
 variable "enable_performance_insights" {
   description = "Enable performance insights for Aurora"
+  type = bool
+  default = true
 }
 
 variable "environment" {

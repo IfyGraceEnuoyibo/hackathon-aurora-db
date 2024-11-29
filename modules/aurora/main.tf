@@ -6,8 +6,8 @@ resource "aws_rds_cluster" "aurora" {
   master_password         = var.master_password
   backup_retention_period = var.backup_retention_days
   vpc_security_group_ids  = [aws_security_group.aurora_sg.id]
-  db_subnet_group_name    = aws_db_subnet_group.aurora_subnets.name
-  enable_performance_insights = var.enable_performance_insights
+  db_subnet_group_name    = aws_db_subnet_group.aurora_subnet_group.name
+  # enable_performance_insights = var.enable_performance_insights
   tags = {
     Environment = var.environment
   }
@@ -15,10 +15,15 @@ resource "aws_rds_cluster" "aurora" {
 
 resource "aws_rds_cluster_instance" "aurora_instance" {
   count              = 2
-  identifier         = "${var.cluster_identifier}-${count.index + 1}"
+  identifier         = "${var.cluster_identifier}-instance-${count.index + 1}"
   cluster_identifier = aws_rds_cluster.aurora.id
   instance_class     = var.instance_class
   engine             = "aurora-postgresql"
+  enable_performance_insights = var.enable_performance_insights
+
+  tags = {
+    Name = "${var.cluster_identifier}-instance-${count.index + 1}"
+  }
 }
 
 # Security Group for Aurora
@@ -47,11 +52,12 @@ resource "aws_security_group" "aurora_sg" {
 }
 
 # Subnet Group for Aurora
-resource "aws_db_subnet_group" "aurora_subnets" {
+resource "aws_db_subnet_group" "aurora_subnet_group" {
   name       = "${var.cluster_identifier}-subnet-group"
   subnet_ids = var.subnet_ids
 
   tags = {
     Name = "${var.cluster_identifier}-subnet-group"
+    Environment = var.environment
   }
 }
