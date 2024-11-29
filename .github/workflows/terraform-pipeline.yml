@@ -47,12 +47,29 @@ jobs:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: terraform plan
 
-      # Terraform Apply
-      - name: Terraform Apply
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        env:
-          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-        run: terraform apply -auto-approve
+      # Wait for Terraform Apply in Terraform Cloud
+      - name: Wait for Terraform Apply
+        id: wait
+        run: |
+          echo "Waiting for Terraform Apply to complete in Terraform Cloud..."
+          while true; do
+            # Check the status of the most recent Terraform run in the workspace
+            STATUS=$(curl -s \
+              --header "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
+              --header "Content-Type: application/vnd.api+json" \
+              https://app.terraform.io/api/v2/workspaces/hackathon-aurora-db/runs | jq -r '.data[0].attributes.status')
+
+            if [ "$STATUS" == "applied" ]; then
+              echo "Terraform Apply has completed successfully."
+              break
+            elif [ "$STATUS" == "errored" ]; then
+              echo "Terraform Apply failed. Exiting workflow."
+              exit 1
+            else
+              echo "Current status: $STATUS. Retrying in 30 seconds..."
+              sleep 30
+            fi
+          done
 
       # Run Schema Initialization
       - name: Initialize Schema
