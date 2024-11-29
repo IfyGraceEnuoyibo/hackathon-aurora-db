@@ -1,0 +1,52 @@
+name: Terraform Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -var-file="environments/${{ secrets.ENVIRONMENT }}.tfvars"
+
+      # Terraform Apply
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        run: terraform apply -var-file="environments/${{ secrets.ENVIRONMENT }}.tfvars" -auto-approve
+
+      # Run Schema Initialization
+      - name: Initialize Schema
+        run: |
+          ./schemas/init_schema.sh
+
+      # Test Database
+      - name: Test Database Connectivity and Schema
+        run: |
+          ./test/test_connectivity.sh
+          ./test/test_data_integrity.sh
