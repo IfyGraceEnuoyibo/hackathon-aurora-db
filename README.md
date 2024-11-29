@@ -39,7 +39,7 @@ This repository provides a complete infrastructure as code (IaC) solution to dep
 ## Folder Structure
 
 ```plaintext
-aurora-database/
+hackathon-aurora-db/
 ├── .github/
 │   └── workflows/
 │       └── terraform-pipeline.yml      # GitHub Actions workflow for CI/CD
@@ -71,7 +71,7 @@ aurora-database/
 ├── backend.tf                          # Terraform backend configuration
 ├── provider.tf                         # Provider configuration
 └── versions.tf                         # Terraform version and provider constraints
-
+```
 ## Setup and Usage
 
 1. ** Prerequisites ** :
@@ -85,13 +85,15 @@ TF_VAR_secret_name: Name of the secret in AWS Secrets Manager.
 
 2. **Clone the Repository**
 ```
-git clone https://github.com/your-org/aurora-database.git
-cd aurora-database
+git clone https://github.com/IfyGraceEnuoyibo/hackathon-aurora-db.git
+cd hackathon-aurora-db
 ```
+
 3. ** Initilize Terraform**
 ```
 terraform init
 ```
+
 4. **Deploy the Infrastructure**
 ## Dev Environment
 ```
@@ -101,11 +103,13 @@ terraform apply -var-file="environments/dev.tfvars" -auto-approve
 ```
 terraform apply -var-file="environments/prod.tfvars" -auto-approve
 ```
+
 5. ** Initialize the Schema
 ## Run the schema initialization script:
 ```
 ./schemas/init_schema.sh
 ```
+
 6. ** Test the Setup**
 ## Test Database Connectivity
 ```
@@ -117,7 +121,7 @@ terraform apply -var-file="environments/prod.tfvars" -auto-approve
 ./test/test_data_integrity.sh
 ```
 
-## # CI/CD Pipeline
+## CI/CD Pipeline
 Workflow
 The GitHub Actions pipeline (```.github/workflows/terraform-pipeline.yml```) automates:
 
@@ -127,11 +131,11 @@ The GitHub Actions pipeline (```.github/workflows/terraform-pipeline.yml```) aut
 **Schema Initialization**: Initializes the database schema.
 **Testing**: Runs connectivity and data integrity tests.
 
-Modules
-1. Aurora Module
+## Modules
+1. **Aurora Module**
 Manages the AWS Aurora PostgreSQL database.
 
-Inputs:
+**Inputs**:
 
 cluster_identifier: Identifier for the cluster.
 master_username: Master username.
@@ -139,14 +143,15 @@ master_password: Master password.
 engine_version: Aurora PostgreSQL version.
 instance_class: Instance class for Aurora instances.
 subnet_ids: List of subnet IDs for the cluster.
-Outputs:
+
+**Outputs**:
 
 aurora_endpoint: Aurora cluster endpoint.
 
-. Network Module
+. **Network Module**
 Sets up VPC, subnets, and security groups.
 
-Inputs:
+**Inputs**:
 
 cidr_block: CIDR block for the VPC.
 public_subnets: Public subnet CIDRs.
@@ -157,7 +162,7 @@ vpc_id: VPC ID.
 public_subnet_ids: IDs of public subnets.
 private_subnet_ids: IDs of private subnets.
 
-Schema
+**Schema**
 The database contains the following tables:
 
 Payee Table:
@@ -182,19 +187,20 @@ user_id: Foreign key referencing payee.
 fraud_score: Numeric score.
 risk_level: Risk level of the transaction.
 
-Testing
+**Testing**
 Infrastructure Validation
 Run terraform validate to check the syntax.
 
-Database Tests
+**Database Tests**
 Connectivity: Validate database connection using test_connectivity.sh.
 Schema and Data: Validate schema creation and data insertion using test_data_integrity.sh.
 
-Best Practices
+## Best Practices
 Security:
 
 Store sensitive information in AWS Secrets Manager.
 Restrict access to the Aurora cluster using security groups.
+
 Resiliency:
 
 Enable multi-AZ for high availability.
@@ -202,4 +208,3 @@ Use backup retention to ensure data recovery.
 Observability:
 
 Enable CloudWatch metrics and Performance Insights.
-
