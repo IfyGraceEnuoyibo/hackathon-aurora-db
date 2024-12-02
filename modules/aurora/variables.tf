@@ -30,6 +30,7 @@ variable "vpc_id" {
 variable "subnet_ids" {
   description = "List of subnet IDs for the Aurora cluster"
   type = list(string)
+  default = [ "subnet-096a9cf11a7e08433", "subnet-050d88f53c87c3bcb" ]
 }
 
 variable "secret_name" {
